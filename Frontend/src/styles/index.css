@@ -1,0 +1,9 @@
+/* src/index.css */
+
+body {
+  margin-top: 50px;
+  padding: 0;
+  background-color: #212121;
+  font-family: sans-serif;
+  color: #fff;
+}

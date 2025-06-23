@@ -4,6 +4,7 @@ const express = require('express');
 const cors = require('cors'); // 👈 Agregas cors
 const app = express();
 const predictRoute = require('./routes/predict');
+import notesRouter from './routes/notes.js'; // Importa tus rutas de notas
 
 app.use(cors({
     origin: 'http://localhost:5173', // 👈 Cambia esto si tu frontend está en otro dominio

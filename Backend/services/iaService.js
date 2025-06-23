@@ -16,7 +16,7 @@ const data = {
   messages: [
     {
       role: 'system',
-      content: 'Solo continúa el texto del usuario. No respondas como asistente. No expliques nada. Responde solo con la continuación inmediata, breve y coherente del texto.'
+      content: 'Solo continúa el texto del usuario. No respondas como asistente. No expliques nada. Responde solo con la continuación inmediata, breve y coherente del texto. si el usuario pide algo como una lista, una tabla o un código, simplemente continúa con el formato solicitado. No agregues explicaciones ni comentarios adicionales. si una palabra esta incompleta completa la palabra y termina la frase'
     },
     {
       role: 'user',
