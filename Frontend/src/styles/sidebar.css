@@ -1,45 +1,157 @@
+button {
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* Toggle botón fondo */
+.background {
+  border-radius: 16px;
+  border: 1px solid #1a1a1a;
+  background: rgba(74, 74, 74, 0.39);
+  mix-blend-mode: luminosity;
+  box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(15px);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 1000;
+}
+
+/* Icono hamburguesa */
+.menu__icon {
+  width: 20px;
+  height: 20px;
+  position: relative;
+}
+
+.menu__icon span {
+  position: absolute;
+  height: 3px;
+  width: 100%;
+  background: #fff;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+.menu__icon span:nth-child(1) {
+  top: 0;
+}
+.menu__icon span:nth-child(2) {
+  top: 50%;
+  transform: translateY(-50%);
+}
+.menu__icon span:nth-child(3) {
+  bottom: 0;
+}
+
+/* Animación a "X" cuando está abierta */
+.background.open .menu__icon span:nth-child(1) {
+  top: 50%;
+  transform: rotate(45deg);
+}
+.background.open .menu__icon span:nth-child(2) {
+  opacity: 0;
+}
+.background.open .menu__icon span:nth-child(3) {
+  bottom: auto;
+  top: 50%;
+  transform: rotate(-45deg);
+}
+
+.layout {
+  display: flex;
+  transition: margin-left 0.3s ease;
+}
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  min-width: 250px;
+  width: 250px;
+  height: 100vh;
+  background-color: #1a1a1a;
+  color: white;
+  padding-top: 80px;
+  box-sizing: border-box;
+  transition: transform 0.3s ease;
+  z-index: 999;
+  overflow: hidden;
+  transform: translateX(-100%);
+}
+
+.sidebar-open .sidebar {
+  transform: translateX(0%);
+}
+
+/* Radio y Glider */
 .radio-container {
   --main-color: #f7e479;
   --main-color-opacity: #f7e4791c;
-
-  /* change this according inputs count */
-  --total-radio: 3;
+  --total-radio: 1;
 
   display: flex;
   flex-direction: column;
   position: relative;
   padding-left: 0.5rem;
 }
+
 .radio-container input {
-  cursor: pointer;
-  appearance: none;
+  display: none;
 }
-.radio-container .glider-container {
+
+.radio-container label {
+  cursor: pointer;
+  padding: 1rem;
+  font-size: 18px;
+  position: relative;
+  color: grey;
+  transition: all 0.3s ease-in-out;
+  white-space: nowrap;        /* Evita que el texto haga wrap */
+  overflow: hidden;           /* Oculta lo que sobra */
+  text-overflow: ellipsis;    /* Muestra "..." al final si es muy largo */
+  max-width: 180px;           /* Ajusta este valor según tu layout */
+  display: block;   
+}
+
+.radio-container input:checked + label {
+  color: var(--main-color);
+}
+
+/* Glider */
+.glider-container {
   position: absolute;
   left: 0;
   top: 0;
   bottom: 0;
+  width: 4px;
   background: linear-gradient(
     0deg,
     rgba(0, 0, 0, 0) 0%,
     rgba(27, 27, 27, 1) 50%,
     rgba(0, 0, 0, 0) 100%
   );
-  width: 1px;
 }
-.radio-container .glider-container .glider {
+
+.glider {
   position: relative;
   height: calc(100% / var(--total-radio));
   width: 100%;
-  background: linear-gradient(
-    0deg,
-    rgba(0, 0, 0, 0) 0%,
-    var(--main-color) 50%,
-    rgba(0, 0, 0, 0) 100%
-  );
+  background: var(--main-color);
   transition: transform 0.5s cubic-bezier(0.37, 1.95, 0.66, 0.56);
 }
-.radio-container .glider-container .glider::before {
+
+.glider::before {
   content: "";
   position: absolute;
   height: 60%;
@@ -49,7 +161,8 @@
   background: var(--main-color);
   filter: blur(10px);
 }
-.radio-container .glider-container .glider::after {
+
+.glider::after {
   content: "";
   position: absolute;
   left: 0;
@@ -60,55 +173,4 @@
     var(--main-color-opacity) 0%,
     rgba(0, 0, 0, 0) 100%
   );
-}
-.radio-container label {
-  cursor: pointer;
-  padding: 1rem;
-  position: relative;
-  color: grey;
-  transition: all 0.3s ease-in-out;
-}
-
-.radio-container input:checked + label {
-  color: var(--main-color);
-}
-
-.radio-container input:nth-of-type(1):checked ~ .glider-container .glider {
-  transform: translateY(0);
-}
-
-.radio-container input:nth-of-type(2):checked ~ .glider-container .glider {
-  transform: translateY(100%);
-}
-
-.radio-container input:nth-of-type(3):checked ~ .glider-container .glider {
-  transform: translateY(200%);
-}
-
-.radio-container input:nth-of-type(4):checked ~ .glider-container .glider {
-  transform: translateY(300%);
-}
-
-.radio-container input:nth-of-type(5):checked ~ .glider-container .glider {
-  transform: translateY(400%);
-}
-
-.radio-container input:nth-of-type(6):checked ~ .glider-container .glider {
-  transform: translateY(500%);
-}
-
-.radio-container input:nth-of-type(7):checked ~ .glider-container .glider {
-  transform: translateY(600%);
-}
-
-.radio-container input:nth-of-type(8):checked ~ .glider-container .glider {
-  transform: translateY(700%);
-}
-
-.radio-container input:nth-of-type(9):checked ~ .glider-container .glider {
-  transform: translateY(800%);
-}
-
-.radio-container input:nth-of-type(10):checked ~ .glider-container .glider {
-  transform: translateY(900%);
 }

@@ -1,6 +1,7 @@
-const express = require('express');
+import express from 'express';
+import iaService from '../services/iaService.js';
+
 const router = express.Router();
-const iaService = require('../services/iaService');
 
 router.post('/', async (req, res) => {
   const { prompt } = req.body;
@@ -18,4 +19,4 @@ router.post('/', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

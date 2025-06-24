@@ -1,15 +1,25 @@
-require('dotenv').config();
+import 'dotenv/config';  // equivalente a require('dotenv').config()
 
-const express = require('express');
-const cors = require('cors'); // 👈 Agregas cors
+import express from 'express';
+import cors from 'cors';
+
+import predictRoute from './routes/predict.js';
+import notesRoute from './routes/notes.js';
+import authRoutes from './routes/authRoutes.js';
+
 const app = express();
-const predictRoute = require('./routes/predict');
 
 app.use(cors({
-    origin: 'http://localhost:5173', // 👈 Cambia esto si tu frontend está en otro dominio
-})); // 👈 Lo usas aquí antes de las rutas
+  origin: 'http://localhost:5173',
+}));
+
 app.use(express.json());
+
+// Rutas
+app.use('/auth', authRoutes); // Rutas de autenticación
 app.use('/predict', predictRoute);
+app.use('/notes', notesRoute);
+
 
 app.listen(3001, () => {
   console.log('Servidor corriendo en http://localhost:3001');

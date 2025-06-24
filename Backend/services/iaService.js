@@ -1,4 +1,5 @@
-const axios = require('axios');
+import axios from 'axios';
+
 const apiKey = process.env.OPENROUTER_API_KEY;
 console.log('OpenRouter API Key:', apiKey ? '✅ Presente' : '❌ Faltante o inválida');
 
@@ -11,22 +12,21 @@ async function getPrediction(prompt) {
       'Content-Type': 'application/json'
     };
 
-const data = {
-  model: 'deepseek/deepseek-chat-v3-0324:free',
-  messages: [
-    {
-      role: 'system',
-      content: 'Solo continúa el texto del usuario. No respondas como asistente. No expliques nada. Responde solo con la continuación inmediata, breve y coherente del texto. si el usuario pide algo como una lista, una tabla o un código, simplemente continúa con el formato solicitado. No agregues explicaciones ni comentarios adicionales. si una palabra esta incompleta completa la palabra y termina la frase'
-    },
-    {
-      role: 'user',
-      content: prompt
-    }
-  ],
-  max_tokens: 15, // para que la continuación sea breve
-  temperature: 0.7
-};
-
+    const data = {
+      model: 'deepseek/deepseek-chat-v3-0324:free',
+      messages: [
+        {
+          role: 'system',
+          content: 'Solo continúa el texto del usuario. No respondas como asistente. No expliques nada. Responde solo con la continuación inmediata, breve y coherente del texto. si el usuario pide algo como una lista, una tabla o un código, simplemente continúa con el formato solicitado. No agregues explicaciones ni comentarios adicionales. si una palabra esta incompleta completa la palabra y termina la frase'
+        },
+        {
+          role: 'user',
+          content: prompt
+        }
+      ],
+      max_tokens: 15, // para que la continuación sea breve
+      temperature: 0.7
+    };
 
     console.log("🧠 Enviando solicitud a OpenRouter con prompt:", prompt);
 
@@ -45,4 +45,8 @@ const data = {
   }
 }
 
-module.exports = { getPrediction };
+const iaService = {
+  getPrediction
+};
+
+export default iaService;

@@ -1,3 +1,6 @@
+
+import '../../styles/checkboxIA.css';
+
 export default function Checkbox({ iaActiva, setIaActiva }) {
     return (
         <label className="checkbox-wrapper">

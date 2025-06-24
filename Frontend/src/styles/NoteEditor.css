@@ -1,9 +1,32 @@
 .center-page {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  height: 60vh; /* Ocupa toda la pantalla */
+  padding-top: 40px;
+  gap: 20px;
 }
+
+
+.title-input {
+  width: 600px; /* igual que el .note-container */
+  margin: 0 auto 50px auto; /* centrado horizontal, margen abajo */
+  padding: 10px 16px;
+  font-size: 1.2rem;
+  border-radius: 8px;
+   background: linear-gradient(#212121, #212121) padding-box,
+              linear-gradient(180deg, transparent 20%,#5702C5  , #E9328F   ) border-box;
+  border: 2px solid transparent;
+  color: white;
+  font-family: inherit;
+  display: block;
+  box-sizing: border-box;
+}
+
+.title-input::placeholder {
+  color: #cecece;
+
+}
+
 
 .note-container {
   width: 600px;
