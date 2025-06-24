@@ -1,6 +1,6 @@
 // src/App.jsx
-import NoteEditor from './components/NoteEditor';
-import TitleDinamic from './components/TitleDinamic';
+import NoteEditor from './components/NoteEditor/NoteEditor';
+import TitleDinamic from './components/NoteEditor/TitleDinamic';
 
 function App() {
   return (

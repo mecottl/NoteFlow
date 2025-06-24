@@ -1,4 +1,4 @@
-import '../styles/TitleDinamic.css';
+import '../../styles/TitleDinamic.css';
 
 export default function TitleDinamic() {
   return (
@@ -8,7 +8,7 @@ export default function TitleDinamic() {
           <p>Note</p>
           <div className="words">
             <span className="word">Flow</span>
-            <span className="word">IA</span>
+            <span className="word">AI</span>
             <span className="word">YourSelf</span>
           </div>
         </div>
