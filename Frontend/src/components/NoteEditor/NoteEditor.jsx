@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // <-- IMPORTANTE
 import Checkbox from './CheckboxIA';
 import useSuggestion from './useSuggestion';
 import SuggestLoader from './SuggestLoader';
@@ -8,6 +9,7 @@ export default function NoteEditor({ userId, onSave }) {
   const [iaActiva, setIaActiva] = useState(true);
   const [title, setTitle] = useState('');
   const [noteId, setNoteId] = useState(null);
+  const navigate = useNavigate(); // <-- NUEVO
 
   const {
     prompt,
@@ -36,6 +38,12 @@ export default function NoteEditor({ userId, onSave }) {
     const randomIndex = Math.floor(Math.random() * frases.length);
     setFrase(frases[randomIndex]);
   }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+    navigate('/auth');
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -81,6 +89,13 @@ export default function NoteEditor({ userId, onSave }) {
 
   return (
     <div className="center-page">
+      {/* --- NUEVO: Botón de logout arriba a la derecha --- */}
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 10 }}>
+        <button className="logout-btn" onClick={handleLogout}>
+          Cerrar sesión
+        </button>
+      </div>
+
       <input
         className="title-input"
         type="text"
@@ -120,3 +135,9 @@ export default function NoteEditor({ userId, onSave }) {
     </div>
   );
 }
+
+// --- MODIFICADO ---
+// 1. Importa useNavigate de react-router-dom.
+// 2. Agrega handleLogout que borra token y userId y navega a /auth.
+// 3. Renderiza un botón 'Cerrar sesión' arriba, bien alineado.
+// 4. Listo para integrar con tu sistema de rutas y autenticación.

@@ -1,17 +1,42 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import NoteEditor from './components/NoteEditor/NoteEditor';
 import TitleDinamic from './components/NoteEditor/TitleDinamic';
 import Sidebar from './components/sidebar/SideBar';
 import AuthForm from './components/AuthForm/AuthForm';
+import { useEffect, useState } from 'react';
 
-function ProtectedNotes() {
-  const token = localStorage.getItem('token');
-  const userId = localStorage.getItem('user_id'); // o 'userId' si así lo guardas
+// --- NOTA: Hook de autenticación reactivo ---
+function useAuth() {
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return !!localStorage.getItem('token') && !!localStorage.getItem('userId');
+  });
+  useEffect(() => {
+    // Permite refrescar el auth cuando cambia localStorage
+    const handler = () => {
+      setIsAuthenticated(
+        !!localStorage.getItem('token') && !!localStorage.getItem('userId')
+      );
+    };
+    window.addEventListener('storage', handler);
+    return () => window.removeEventListener('storage', handler);
+  }, []);
+  return isAuthenticated;
+}
 
-  const isAuthenticated = !!token && !!userId;
+// --- NOTA: Componente protegido para rutas privadas ---
+function ProtectedRoute({ children }) {
+  const isAuthenticated = useAuth();
+  const location = useLocation();
+  if (!isAuthenticated) {
+    // Guarda la ruta actual para redirect después del login (opcional)
+    return <Navigate to="/auth" state={{ from: location }} replace />;
+  }
+  return children;
+}
 
-  if (!isAuthenticated) return <Navigate to="/auth" />;
-
+// --- NOTA: Página principal de notas, recibe userId globalmente ---
+function NotesPage() {
+  const userId = localStorage.getItem('userId');
   return (
     <>
       <TitleDinamic userId={userId} />
@@ -22,23 +47,37 @@ function ProtectedNotes() {
 }
 
 function App() {
-  const isAuthenticated = !!localStorage.getItem('token');
+  const isAuthenticated = useAuth();
 
   return (
     <BrowserRouter>
       <Routes>
-        {/* Redirige a /auth si no está autenticado, a /notes si sí */}
         <Route
           path="/"
-          element={<Navigate to={isAuthenticated ? '/notes' : '/auth'} />}
+          element={<Navigate to={isAuthenticated ? '/notes' : '/auth'} replace />}
         />
         <Route path="/auth" element={<AuthForm />} />
-        <Route path="/notes" element={<ProtectedNotes />} />
+        <Route
+          path="/notes"
+          element={
+            <ProtectedRoute>
+              <NotesPage />
+            </ProtectedRoute>
+          }
+        />
         {/* Cualquier ruta no definida redirige a "/" */}
-        <Route path="*" element={<Navigate to="/" />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );
 }
 
 export default App;
+
+// --- CAMBIOS Y NOTAS ---
+// 1. Se usa 'userId' siempre (no 'user_id') para total consistencia.
+// 2. Nuevo hook 'useAuth' para que la autenticación sea reactiva (se actualiza si cambian los datos en localStorage).
+// 3. Nuevo componente 'ProtectedRoute' para proteger cualquier ruta privada fácil y extensible.
+// 4. Todo más organizado y fácil de leer.
+// 5. 'replace' en Navigate para no llenar el historial de redirecciones.
+// 6. Ahora puedes expandir fácilmente el número de rutas privadas si creces la app.

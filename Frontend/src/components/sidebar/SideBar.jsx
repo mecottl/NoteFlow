@@ -5,9 +5,14 @@ export default function Sidebar({ userId }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [notes, setNotes] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [loading, setLoading] = useState(false);         // <--- nuevo
+  const [error, setError] = useState(null);              // <--- nuevo
 
   useEffect(() => {
     if (!userId) return;
+
+    setLoading(true);
+    setError(null);
 
     const fetchNotes = async () => {
       try {
@@ -15,17 +20,17 @@ export default function Sidebar({ userId }) {
         const data = await res.json();
 
         if (!data || data.length === 0) {
-          const fakeNote = { id: "fake", title: "Sin título 1" };
-          setNotes([fakeNote]);
+          setNotes([{ id: "fake", title: "Sin notas" }]);
         } else {
           setNotes(data);
         }
-
         setSelectedIndex(0);
       } catch (err) {
-        console.error("Error al obtener notas:", err);
-        setNotes([{ id: "fake", title: "Sin título 1" }]);
+        setError("Error al obtener notas.");
+        setNotes([{ id: "fake", title: "Sin notas" }]);
         setSelectedIndex(0);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -46,6 +51,8 @@ export default function Sidebar({ userId }) {
       </div>
 
       <div className="sidebar">
+        {loading && <div className="loading">Cargando notas...</div>}
+        {error && <div className="error">{error}</div>}
         <div
           className="radio-container"
           style={{ "--total-radio": notes.length }}
@@ -64,7 +71,6 @@ export default function Sidebar({ userId }) {
               </label>
             </div>
           ))}
-
           <div className="glider-container">
             <div
               className="glider"

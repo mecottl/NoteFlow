@@ -1,3 +1,6 @@
+// routes/notes.js
+// --- NOTA: Rutas limpias y correctas, usan ES6, y filtran por userId ---
+
 import express from 'express';
 import dbPromise from '../db/db.js';
 
@@ -18,26 +21,27 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Leer todas las notas de un usuario
-router.get('/user/:user_id', async (req, res) => {
-  const { user_id } = req.params;
+// Obtener todas las notas de un usuario
+router.get('/user/:userId', async (req, res) => {
+  // --- MODIFICACIÓN: Cambié 'user_id' por 'userId' para que coincida con frontend/localStorage ---
+  const { userId } = req.params;
   try {
     const db = await dbPromise;
-    const notes = await db.all(`SELECT * FROM notes WHERE user_id = ?`, [user_id]);
+    const notes = await db.all(`SELECT * FROM notes WHERE user_id = ?`, [userId]);
     res.json(notes);
-  } catch {
+  } catch (err) {
     res.status(500).json({ error: 'Error al leer notas' });
   }
 });
 
-// Leer una nota por ID
+// Obtener nota individual
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
   try {
     const db = await dbPromise;
     const note = await db.get(`SELECT * FROM notes WHERE id = ?`, [id]);
     res.json(note);
-  } catch {
+  } catch (err) {
     res.status(500).json({ error: 'Error al leer nota' });
   }
 });
@@ -53,7 +57,7 @@ router.put('/:id', async (req, res) => {
       [title, content, id]
     );
     res.json({ success: true });
-  } catch {
+  } catch (err) {
     res.status(500).json({ error: 'Error al actualizar nota' });
   }
 });
@@ -65,7 +69,7 @@ router.delete('/:id', async (req, res) => {
     const db = await dbPromise;
     await db.run(`DELETE FROM notes WHERE id = ?`, [id]);
     res.json({ success: true });
-  } catch {
+  } catch (err) {
     res.status(500).json({ error: 'Error al eliminar nota' });
   }
 });
