@@ -1,17 +1,15 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import NoteEditor from './components/NoteEditor/NoteEditor';
+import { useState, useEffect } from 'react';
 import TitleDinamic from './components/NoteEditor/TitleDinamic';
 import Sidebar from './components/sidebar/SideBar';
+import NoteEditor from './components/NoteEditor/NoteEditor';
 import AuthForm from './components/AuthForm/AuthForm';
-import { useEffect, useState } from 'react';
 
-// --- NOTA: Hook de autenticación reactivo ---
 function useAuth() {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     return !!localStorage.getItem('token') && !!localStorage.getItem('userId');
   });
   useEffect(() => {
-    // Permite refrescar el auth cuando cambia localStorage
     const handler = () => {
       setIsAuthenticated(
         !!localStorage.getItem('token') && !!localStorage.getItem('userId')
@@ -23,25 +21,71 @@ function useAuth() {
   return isAuthenticated;
 }
 
-// --- NOTA: Componente protegido para rutas privadas ---
 function ProtectedRoute({ children }) {
   const isAuthenticated = useAuth();
   const location = useLocation();
   if (!isAuthenticated) {
-    // Guarda la ruta actual para redirect después del login (opcional)
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
   return children;
 }
 
-// --- NOTA: Página principal de notas, recibe userId globalmente ---
-function NotesPage() {
+function NotesDashboard() {
   const userId = localStorage.getItem('userId');
+  const [notes, setNotes] = useState([]);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  // Cargar notas al iniciar y cuando cambie el userId
+  useEffect(() => {
+    if (!userId) return;
+    fetch(`http://localhost:3001/notes/user/${userId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setNotes(data || []);
+        setSelectedIndex(0);
+      });
+  }, [userId]);
+
+  // Selección de nota
+  const handleSelect = (idx) => setSelectedIndex(idx);
+
+  // Eliminar nota
+  const handleDelete = async (id) => {
+    await fetch(`http://localhost:3001/notes/${id}`, { method: "DELETE" });
+    const data = await fetch(`http://localhost:3001/notes/user/${userId}`).then((r) => r.json());
+    setNotes(data || []);
+    setSelectedIndex(0);
+  };
+
+  // Cuando se crea o actualiza una nota
+  // ------> MODIFICADO: acepta noteId, selecciona la nota correcta
+  const reloadNotes = async (noteIdToStay) => {
+    const data = await fetch(`http://localhost:3001/notes/user/${userId}`).then((r) => r.json());
+    setNotes(data || []);
+    if (noteIdToStay) {
+      const idx = data.findIndex(n => n.id === noteIdToStay);
+      setSelectedIndex(idx !== -1 ? idx : 0);
+    } else {
+      setSelectedIndex(0);
+    }
+  };
+
+  const selectedNote = notes[selectedIndex] || { title: "", content: "" };
+
   return (
     <>
       <TitleDinamic userId={userId} />
-      <Sidebar userId={userId} />
-      <NoteEditor userId={userId} />
+      <Sidebar
+        notes={notes}
+        selectedIndex={selectedIndex}
+        onSelect={handleSelect}
+        onDelete={handleDelete}
+      />
+      <NoteEditor
+        userId={userId}
+        note={selectedNote}
+        onSave={reloadNotes} // <- ya acepta el noteId
+      />
     </>
   );
 }
@@ -61,11 +105,10 @@ function App() {
           path="/notes"
           element={
             <ProtectedRoute>
-              <NotesPage />
+              <NotesDashboard />
             </ProtectedRoute>
           }
         />
-        {/* Cualquier ruta no definida redirige a "/" */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
@@ -73,11 +116,3 @@ function App() {
 }
 
 export default App;
-
-// --- CAMBIOS Y NOTAS ---
-// 1. Se usa 'userId' siempre (no 'user_id') para total consistencia.
-// 2. Nuevo hook 'useAuth' para que la autenticación sea reactiva (se actualiza si cambian los datos en localStorage).
-// 3. Nuevo componente 'ProtectedRoute' para proteger cualquier ruta privada fácil y extensible.
-// 4. Todo más organizado y fácil de leer.
-// 5. 'replace' en Navigate para no llenar el historial de redirecciones.
-// 6. Ahora puedes expandir fácilmente el número de rutas privadas si creces la app.

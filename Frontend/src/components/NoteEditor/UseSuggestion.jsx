@@ -57,5 +57,6 @@ export default function useSuggestion(iaActiva) {
     loading,
     handleChange,
     handleKeyDown,
+    setPrompt
   };
 }

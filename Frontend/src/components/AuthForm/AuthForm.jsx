@@ -6,8 +6,8 @@ export default function AuthForm() {
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [errorMsg, setErrorMsg] = useState('');         // <-- Para errores inline
-  const [loading, setLoading] = useState(false);        // <-- Para evitar dobles submits
+  const [errorMsg, setErrorMsg] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -35,7 +35,8 @@ export default function AuthForm() {
       if (res.ok) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('userId', data.userId);
-        // Opcional: limpia campos tras registro/login
+        if (data.username) localStorage.setItem('username', data.username); // <--- AQUÍ
+        // Limpia campos tras registro/login
         setUsername('');
         setEmail('');
         setPassword('');
@@ -87,7 +88,6 @@ export default function AuthForm() {
             ? 'Registrarse'
             : 'Entrar'}
         </button>
-        {/* --- NOTA: Muestra el error abajo del botón --- */}
         {errorMsg && <div className="error-msg">{errorMsg}</div>}
       </form>
       <button onClick={() => setIsRegister(!isRegister)} disabled={loading}>
@@ -97,8 +97,6 @@ export default function AuthForm() {
   );
 }
 
-// --- NOTAS DE MODIFICACIÓN ---
-// - Añadí estados errorMsg y loading para mejor UX.
-// - El botón de submit se desactiva si está procesando.
-// - Los errores aparecen en el formulario, no con alert().
-// - Se limpian los campos al loguear/registrar.
+// --- Cambios clave ---
+// - Guarda el username en localStorage si viene en la respuesta (login o registro)
+// - Así podrás mostrar el nombre en cualquier parte del frontend

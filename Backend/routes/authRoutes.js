@@ -1,7 +1,4 @@
 // routes/authRoutes.js
-// --- NOTA: Cambiado a sintaxis ES6 (import/export) y conexión correcta con SQLite ---
-// --- NOTA: Ahora se retorna un token JWT y el userId en /login ---
-
 import express from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -10,7 +7,7 @@ import dbPromise from '../db/db.js';
 const router = express.Router();
 const SECRET = process.env.JWT_SECRET || 'mi_super_secreto';
 
-// Registro de usuario
+// --- REGISTRO ---
 router.post('/register', async (req, res) => {
   const { username, email, password } = req.body;
   const hash = await bcrypt.hash(password, 10);
@@ -21,13 +18,22 @@ router.post('/register', async (req, res) => {
       'INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)',
       [username, email, hash]
     );
-    res.json({ success: true });
+    // Consulta el usuario recien creado para devolver datos
+    const user = await db.get('SELECT id, username FROM users WHERE email = ?', [email]);
+    // Opción: genera token automático tras registro
+    const token = jwt.sign({ userId: user.id }, SECRET, { expiresIn: '2d' });
+    res.json({
+      success: true,
+      token,
+      userId: user.id,
+      username: user.username
+    });
   } catch (err) {
     res.status(400).json({ error: 'Usuario o email ya registrado' });
   }
 });
 
-// Login de usuario
+// --- LOGIN ---
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -38,9 +44,13 @@ router.post('/login', async (req, res) => {
     const valid = await bcrypt.compare(password, user.password_hash);
     if (!valid) return res.status(401).json({ error: 'Contraseña incorrecta' });
 
-    // --- MODIFICACIÓN: Ahora se retorna JWT y userId ---
+    // Devuelve token, userId y username
     const token = jwt.sign({ userId: user.id }, SECRET, { expiresIn: '2d' });
-    res.json({ token, userId: user.id });
+    res.json({
+      token,
+      userId: user.id,
+      username: user.username
+    });
   } catch (err) {
     res.status(500).json({ error: 'Error en login' });
   }

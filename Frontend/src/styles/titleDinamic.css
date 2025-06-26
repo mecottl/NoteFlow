@@ -1,8 +1,20 @@
-.card {
+.card-header {
   display: flex;
-  justify-content: center;
-  font-size: 25px;
-  max-width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 60px;
+  z-index: 1101;
+  background: transparent;
+}
+
+.header-space {
+  width: 56px;   /* Igual al ancho del toggle (o un poco mayor, ej: 40-56px) */
+  min-width: 40px;
+  height: 40px;
 }
 
 .loader {
@@ -11,8 +23,11 @@
   font-weight: 500;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   border-radius: 8px;
+  font-size: 25px;
+  line-height: 1;
+  min-width: 180px;
 }
 
 .words {
@@ -25,12 +40,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    var(--bg-color) 10%,
-    transparent 30%,
-    transparent 70%,
-    var(--bg-color) 90%
-  );
+
   z-index: 20;
   pointer-events: none;
 }
@@ -45,16 +55,30 @@
 }
 
 @keyframes spin_4991 {
-  0%, 16.66% {
-    transform: translateY(0%);
-  }
-  33.33%, 49.99% {
-    transform: translateY(-100%);
-  }
-  66.66%, 83.33% {
-    transform: translateY(-200%);
-  }
-  100% {
-    transform: translateY(0%);
-  }
+  0%, 16.66% { transform: translateY(0%); }
+  33.33%, 49.99% { transform: translateY(-100%); }
+  66.66%, 83.33% { transform: translateY(-200%); }
+  100% { transform: translateY(0%); }
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  height: 40px;
+}
+
+.user-btn, .new-btn {
+  background: #232323;
+  color: #fff;
+  border-radius: 8px;
+  padding: 6px 16px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  transition: background .2s;
+}
+.user-btn:hover, .new-btn:hover {
+  background: #8930FC;
+  color: #fff;
 }

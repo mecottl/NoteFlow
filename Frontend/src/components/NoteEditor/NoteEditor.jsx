@@ -1,50 +1,48 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // <-- IMPORTANTE
+import { useNavigate } from 'react-router-dom';
 import Checkbox from './CheckboxIA';
 import useSuggestion from './useSuggestion';
 import SuggestLoader from './SuggestLoader';
 import '../../styles/NoteEditor.css';
 
-export default function NoteEditor({ userId, onSave }) {
+export default function NoteEditor({ userId, note, onSave }) {
   const [iaActiva, setIaActiva] = useState(true);
   const [title, setTitle] = useState('');
   const [noteId, setNoteId] = useState(null);
-  const navigate = useNavigate(); // <-- NUEVO
+  const navigate = useNavigate();
 
+  // Hook IA maneja el prompt y lo expone con setPrompt
   const {
     prompt,
     suggestion,
     loading,
     handleChange,
     handleKeyDown,
-    setPrompt
+    setPrompt,
   } = useSuggestion(iaActiva);
 
-  const frases = [
-    '¿En qué estás pensando hoy?',
-    '¿Qué quieres escribir?',
-    'Cuéntame algo interesante...',
-    '¿Qué notas quieres tomar?',
-    'Exprésate con palabras...',
-    'Hagamos un poema',
-    'Escribe algo que te inspire',
-    '¿Qué te gustaría recordar?',
-    '¿Qué te gustaría explorar hoy?',
-    '¿Qué historia quieres contar?',
-  ];
-  const [frase, setFrase] = useState(frases[0]);
-
+  // Cuando cambia la nota seleccionada, sincroniza los campos
   useEffect(() => {
-    const randomIndex = Math.floor(Math.random() * frases.length);
-    setFrase(frases[randomIndex]);
-  }, []);
+    setTitle(note?.title || '');
+    setPrompt(note?.content || '');
+    setNoteId(note?.id || null);
+  }, [note, setPrompt]);
 
+  // Logout
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
     navigate('/auth');
   };
 
+  // Botón para limpiar campos y crear nota nueva
+  const handleNuevaNota = () => {
+    setTitle('');
+    setPrompt('');
+    setNoteId(null);
+  };
+
+  // Guardar o actualizar nota, manteniendo el focus sobre la nota editada
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -70,14 +68,16 @@ export default function NoteEditor({ userId, onSave }) {
       });
 
       if (res.ok) {
+        let idToStay = noteId;
         if (!noteId) {
           const data = await res.json();
           setNoteId(data.id);
+          idToStay = data.id;
           alert('Nota guardada correctamente!');
         } else {
           alert('Nota actualizada.');
         }
-        if (onSave) onSave()
+        if (onSave) onSave(idToStay); // <-- QUEDA SOBRE LA NOTA EDITADA O NUEVA
       } else {
         alert('Error al guardar o actualizar la nota.');
       }
@@ -89,10 +89,13 @@ export default function NoteEditor({ userId, onSave }) {
 
   return (
     <div className="center-page">
-      {/* --- NUEVO: Botón de logout arriba a la derecha --- */}
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 10 }}>
+      {/* Botones de sesión y nueva nota */}
+      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginBottom: 10 }}>
         <button className="logout-btn" onClick={handleLogout}>
           Cerrar sesión
+        </button>
+        <button className="nuevo-btn" onClick={handleNuevaNota}>
+          Crear nota nueva
         </button>
       </div>
 
@@ -111,7 +114,7 @@ export default function NoteEditor({ userId, onSave }) {
           <div className="textarea-wrapper">
             <textarea
               className="suggestion-layer"
-              value={prompt + ' ' + suggestion + (suggestion ? ' ⇥TAB' : '')}
+              value={prompt + (suggestion ? ' ' + suggestion + ' ⇥TAB' : '')}
               readOnly
               tabIndex={-1}
             ></textarea>
@@ -120,7 +123,7 @@ export default function NoteEditor({ userId, onSave }) {
               value={prompt}
               onChange={handleChange}
               onKeyDown={handleKeyDown}
-              placeholder={frase}
+              placeholder={'Escribe tu nota aquí...'}
               rows={6}
             ></textarea>
           </div>
@@ -135,9 +138,3 @@ export default function NoteEditor({ userId, onSave }) {
     </div>
   );
 }
-
-// --- MODIFICADO ---
-// 1. Importa useNavigate de react-router-dom.
-// 2. Agrega handleLogout que borra token y userId y navega a /auth.
-// 3. Renderiza un botón 'Cerrar sesión' arriba, bien alineado.
-// 4. Listo para integrar con tu sistema de rutas y autenticación.
