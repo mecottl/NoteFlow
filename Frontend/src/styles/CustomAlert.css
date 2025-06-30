@@ -1,0 +1,77 @@
+/* --- ALERTA ERROR (ROJO) --- */
+.error, .alert-error {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  width: 320px;
+  padding: 12px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: start;
+  border-radius: 50px;
+  background: linear-gradient(to right, #f45c43, #eb3349); /* rojo */
+  box-shadow: 0 0px 10px #de1c3280;
+}
+
+/* --- ALERTA GUARDADO (VERDE) --- */
+.guardado, .alert-guardado {
+  background: linear-gradient(to right, #43e97b 0%, #38f9d7 100%);
+  box-shadow: 0 0px 10px #29e28080;
+}
+
+/* --- ALERTA ACTUALIZADO (AMARILLO) --- */
+.actualizado, .alert-actualizado {
+  background: linear-gradient(to right, #f7e479 0%, #ffef5a 100%);
+  box-shadow: 0 0px 10px #f1c40f80;
+}
+
+/* --- ALERTA ELIMINADO (GRIS SUAVE) --- */
+.eliminado, .alert-eliminado {
+  background: linear-gradient(to right, #9796f0 0%, #fbc7d4 100%);
+  box-shadow: 0 0px 10px #9796f080;
+}
+
+/* El resto de clases (icon, title, close) pueden ser iguales: */
+.error__icon,
+.guardado__icon,
+.actualizado__icon,
+.eliminado__icon {
+  width: 20px;
+  height: 20px;
+  transform: translateY(-2px);
+  margin-right: 8px;
+  filter: drop-shadow(2px 1px 2px rgb(0 0 0 / 0.4));
+}
+
+.error__icon path,
+.guardado__icon path,
+.actualizado__icon path,
+.eliminado__icon path {
+  fill: #fff;
+}
+
+.error__title,
+.guardado__title,
+.actualizado__title,
+.eliminado__title {
+  font-weight: 500;
+  font-size: 14px;
+  color: #fff;
+}
+
+.error__close,
+.guardado__close,
+.actualizado__close,
+.eliminado__close {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  margin-left: auto;
+  filter: drop-shadow(2px 1px 2px rgb(0 0 0 / 0.4));
+}
+
+.error__close path,
+.guardado__close path,
+.actualizado__close path,
+.eliminado__close path {
+  fill: #fff;
+}

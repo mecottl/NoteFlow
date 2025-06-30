@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
-import Header from '../Header/Header';
-import Sidebar from '../Sidebar/Sidebar';
-import NoteEditor from '../NoteEditor/NoteEditor';
+import { useState, useEffect, useCallback } from "react";
+import Header from "../Header/Header";
+import Sidebar from "../Sidebar/Sidebar";
+import NoteEditor from "../NoteEditor/NoteEditor";
+import CustomAlert from "../NoteEditor/CustomAlert"; // Asegúrate de que la ruta sea correcta
 
 export default function NotesDashboard() {
   const userId = localStorage.getItem('userId');
@@ -9,8 +10,13 @@ export default function NotesDashboard() {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // --- SIDEBAR HANDLERS ---
-  const handleToggleSidebar = useCallback(() => setSidebarOpen(prev => !prev), []);
+  // ALERTAS CENTRALIZADAS
+  const [alertas, setAlertas] = useState([]);
+  const lanzarAlerta = (tipo, mensaje) => setAlertas((prev) => [...prev, { tipo, mensaje }]);
+  const closeAlerta = (idx) => setAlertas((prev) => prev.filter((_, i) => i !== idx));
+
+  // Handlers Sidebar/Header
+  const handleToggleSidebar = useCallback(() => setSidebarOpen((prev) => !prev), []);
   const handleCloseSidebar = useCallback(() => setSidebarOpen(false), []);
 
   // CREAR NOTA
@@ -28,33 +34,38 @@ export default function NotesDashboard() {
       const idx = data.findIndex(n => n.id === id);
       setSelectedIndex(idx !== -1 ? idx : 0);
       setSidebarOpen(false);
+      lanzarAlerta("guardado", "¡Nota guardada correctamente!");
     }
   };
 
-  const handleOpenUserMenu = () => {
-    alert('Aquí pondrás el menú de usuario.');
-  };
+  // Menú usuario (pendiente, solo demo)
+  const handleOpenUserMenu = () => lanzarAlerta("info", "¡Aquí pondrás tu menú de usuario!");
 
+  // CARGAR NOTAS
   useEffect(() => {
     if (!userId) return;
     fetch(`http://localhost:3001/notes/user/${userId}`)
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         setNotes(data || []);
         setSelectedIndex(0);
       });
   }, [userId]);
 
-  const handleSelect = idx => setSelectedIndex(idx);
+  // Selección de nota
+  const handleSelect = (idx) => setSelectedIndex(idx);
 
+  // ELIMINAR NOTA y alerta
   const handleDelete = async (id) => {
     await fetch(`http://localhost:3001/notes/${id}`, { method: "DELETE" });
     const data = await fetch(`http://localhost:3001/notes/user/${userId}`).then((r) => r.json());
     setNotes(data || []);
     setSelectedIndex(0);
+    lanzarAlerta("eliminado", "Nota eliminada.");
   };
 
-  const reloadNotes = async (noteIdToStay) => {
+  // Guardar/actualizar (recibe noteId para mantener selección)
+  const reloadNotes = async (noteIdToStay, tipoAlerta = null) => {
     const data = await fetch(`http://localhost:3001/notes/user/${userId}`).then((r) => r.json());
     setNotes(data || []);
     if (noteIdToStay) {
@@ -63,12 +74,25 @@ export default function NotesDashboard() {
     } else {
       setSelectedIndex(0);
     }
+    if (tipoAlerta === "guardado") lanzarAlerta("guardado", "¡Nota guardada correctamente!");
+    if (tipoAlerta === "actualizado") lanzarAlerta("actualizado", "Nota actualizada.");
   };
 
   const selectedNote = notes[selectedIndex] || { title: "", content: "" };
 
   return (
     <>
+      {/* ALERTAS */}
+      <div style={{ position: "fixed", top: 25, right: 30, zIndex: 2003 }}>
+        {alertas.map((alerta, idx) => (
+          <CustomAlert
+            key={idx}
+            tipo={alerta.tipo}
+            mensaje={alerta.mensaje}
+            onClose={() => closeAlerta(idx)}
+          />
+        ))}
+      </div>
       <Header
         sidebarOpen={sidebarOpen}
         onToggleSidebar={handleToggleSidebar}
@@ -86,7 +110,8 @@ export default function NotesDashboard() {
       <NoteEditor
         userId={userId}
         note={selectedNote}
-        onSave={reloadNotes}
+        onSave={(noteId, type) => reloadNotes(noteId, type)}
+        lanzarAlerta={lanzarAlerta}
       />
     </>
   );

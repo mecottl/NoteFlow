@@ -1,17 +1,21 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Checkbox from './CheckboxIA';
 import useSuggestion from './useSuggestion';
 import SuggestLoader from './SuggestLoader';
 import '../../styles/NoteEditor.css';
 
-export default function NoteEditor({ userId, note, onSave }) {
+export default function NoteEditor({ userId, note, onSave, lanzarAlerta }) {
   const [iaActiva, setIaActiva] = useState(true);
   const [title, setTitle] = useState('');
   const [noteId, setNoteId] = useState(null);
+
   const navigate = useNavigate();
 
-  // Hook IA maneja el prompt y lo expone con setPrompt
+  // Referencias para autosize sincronizado
+  const ghostRef = useRef();
+  const textareaRef = useRef();
+
   const {
     prompt,
     suggestion,
@@ -20,6 +24,20 @@ export default function NoteEditor({ userId, note, onSave }) {
     handleKeyDown,
     setPrompt,
   } = useSuggestion(iaActiva);
+
+  // Sincroniza el tamaño de ambas capas
+  useEffect(() => {
+    if (!ghostRef.current || !textareaRef.current) return;
+    ghostRef.current.style.height = 'auto';
+    textareaRef.current.style.height = 'auto';
+    const maxH = Math.max(
+      ghostRef.current.scrollHeight,
+      textareaRef.current.scrollHeight,
+      96
+    );
+    ghostRef.current.style.height = maxH + 'px';
+    textareaRef.current.style.height = maxH + 'px';
+  }, [prompt, suggestion]);
 
   // Cuando cambia la nota seleccionada, sincroniza los campos
   useEffect(() => {
@@ -35,22 +53,13 @@ export default function NoteEditor({ userId, note, onSave }) {
     navigate('/auth');
   };
 
-  // Botón para limpiar campos y crear nota nueva
-  const handleNuevaNota = () => {
-    setTitle('');
-    setPrompt('');
-    setNoteId(null);
-  };
-
   // Guardar o actualizar nota, manteniendo el focus sobre la nota editada
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!title.trim() || !prompt.trim()) {
-      alert('Por favor, ingresa un título y contenido para la nota.');
+      lanzarAlerta("error", "Por favor, ingresa un título y contenido para la nota.");
       return;
     }
-
     const method = noteId ? 'PUT' : 'POST';
     const endpoint = noteId
       ? `http://localhost:3001/notes/${noteId}`
@@ -73,28 +82,24 @@ export default function NoteEditor({ userId, note, onSave }) {
           const data = await res.json();
           setNoteId(data.id);
           idToStay = data.id;
-          alert('Nota guardada correctamente!');
+          onSave && onSave(idToStay, "guardado");
         } else {
-          alert('Nota actualizada.');
+          onSave && onSave(idToStay, "actualizado");
         }
-        if (onSave) onSave(idToStay); // <-- QUEDA SOBRE LA NOTA EDITADA O NUEVA
       } else {
-        alert('Error al guardar o actualizar la nota.');
+        lanzarAlerta("error", "Error al guardar o actualizar la nota.");
       }
     } catch (error) {
-      console.error('Error al guardar nota:', error);
-      alert('Error al guardar o actualizar la nota.');
+      lanzarAlerta("error", "Error al guardar o actualizar la nota.");
     }
   };
 
   return (
     <div className="center-page">
-      {/* Botones de sesión y nueva nota */}
       <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginBottom: 10 }}>
         <button className="logout-btn" onClick={handleLogout}>
           Cerrar sesión
         </button>
-      
       </div>
 
       <input
@@ -110,27 +115,30 @@ export default function NoteEditor({ userId, note, onSave }) {
 
         <form className="form" onSubmit={handleSubmit}>
           <div className="textarea-wrapper">
+            <div
+              className="ghost-input"
+              ref={ghostRef}
+              aria-hidden="true"
+            >
+              <span style={{ opacity: 0 }}>{prompt}</span>
+              <span className="ghost-suggest">{suggestion}</span>
+              {suggestion && " ⇥TAB"}
+            </div>
             <textarea
-              className="suggestion-layer"
-              value={prompt + (suggestion ? ' ' + suggestion + ' ⇥TAB' : '')}
-              readOnly
-              tabIndex={-1}
-            ></textarea>
-            <textarea
+              ref={textareaRef}
               className="editable-layer"
               value={prompt}
               onChange={handleChange}
               onKeyDown={handleKeyDown}
-              placeholder={'Escribe tu nota aquí...'}
-              rows={6}
-            ></textarea>
+              placeholder="Escribe tu nota aquí..."
+              rows={4}
+            />
           </div>
 
           <button className="form-submit-btn" type="submit">
             {noteId ? 'Actualizar NFlow' : 'Guardar NFlow'}
           </button>
         </form>
-
         {loading && <SuggestLoader />}
       </div>
     </div>

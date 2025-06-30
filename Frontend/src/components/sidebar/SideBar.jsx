@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "./Sidebar.css";
-import ModalConfirmDelete from "./ModalConfirmDelete"; // Ajusta la ruta según tu proyecto
+import ModalConfirmDelete from "./ModalConfirmDelete"; // Ajusta la ruta
 
 export default function Sidebar({
   notes, selectedIndex, onSelect, onDelete,
@@ -21,7 +21,7 @@ export default function Sidebar({
 
   // Cuando se confirma borrar
   const handleConfirmDelete = () => {
-    if (pendingDelete) onDelete(pendingDelete);
+    if (pendingDelete) onDelete(pendingDelete); // Aquí solo manda el id al padre
     setShowModal(false);
     setPendingDelete(null);
   };
@@ -91,7 +91,6 @@ export default function Sidebar({
           </div>
         </div>
       </div>
-
       {/* MODAL de confirmación */}
       <ModalConfirmDelete
         open={showModal}
