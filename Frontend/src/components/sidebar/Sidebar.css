@@ -1,0 +1,251 @@
+button {
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  background: rgba(0,0,0,0.35);
+  z-index: 1199;
+  transition: background 0.2s;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  min-width: 250px;
+  width: 250px;
+  height: 100vh;
+  background-color: #1a1a1a;
+  color: white;
+  padding-top: 80px;
+  box-sizing: border-box;
+  transition: transform 0.3s ease;
+  z-index: 1200;
+  overflow: hidden;
+  transform: translateX(calc(-100% - 6px));
+}
+
+.sidebar.open {
+  transform: translateX(0%);
+}
+
+/* Radio y Glider */
+.radio-container {
+  --main-color: #5702C5 ;
+  --main-color-opacity: #8930FC1c;
+  --total-radio: 1;
+
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding-left: 0.5rem;
+}
+
+.radio-container input {
+  display: none;
+}
+
+.radio-container label {
+  cursor: pointer;
+  padding: 1rem;
+  font-size: 18px;
+  position: relative;
+  color: grey;
+  transition: all 0.3s ease-in-out;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+  display: block;
+}
+
+.radio-container input:checked + label {
+  color: var(--main-color);
+}
+
+.glider-container {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(27, 27, 27, 1) 50%,
+    rgba(0, 0, 0, 0) 100%
+  );
+}
+
+.glider {
+  position: relative;
+  height: calc(100% / var(--total-radio));
+  width: 100%;
+  background: var(--main-color);
+  transition: transform 0.5s cubic-bezier(0.37, 1.95, 0.66, 0.56);
+}
+
+.glider::before {
+  content: "";
+  position: absolute;
+  height: 60%;
+  width: 300%;
+  top: 50%;
+  transform: translateY(-50%);
+  filter: blur(10px);
+}
+
+.glider::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  height: 100%;
+  width: 150px;
+  background: linear-gradient(
+    90deg,
+    var(--main-color-opacity) 0%,
+    rgba(214, 0, 0, 0) 100%
+  );
+}
+.delete-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin-left: 4px;
+  margin-right: 0;
+  background: none;
+  border: none;
+  color: #d32f2f;
+  font-size: 15px;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  transition: background 0.18s;
+  box-shadow: none;
+}
+
+.delete-btn-icon {
+  stroke: #d32f2f;
+  width: 17px;
+  height: 17px;
+  transition: stroke 0.2s;
+  pointer-events: none;
+}
+
+.delete-btn:hover,
+.delete-btn:focus {
+  background: rgba(211,47,47,0.08);
+}
+
+.delete-btn:hover .delete-btn-icon,
+.delete-btn:focus .delete-btn-icon {
+  stroke: #fff;
+  background: #d32f2f;
+  border-radius: 50%;
+}
+
+/* Overlay oscuro */
+.modal-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.38);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2002;
+}
+
+/* Card del modal */
+.modal-confirm-card {
+  background: #222B36;
+  border-radius: 18px;
+  padding: 2.2rem 2rem 1.4rem 2rem;
+  box-shadow: 0 6px 32px 0 rgba(0,0,0,0.14);
+  min-width: 320px;
+  max-width: 92vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: modalpopin 0.25s;
+}
+
+@keyframes modalpopin {
+  0% { opacity: 0; transform: scale(0.95);}
+  100% { opacity: 1; transform: scale(1);}
+}
+
+.modal-confirm-icon {
+  margin-bottom: 0.8rem;
+}
+
+.modal-confirm-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.7rem;
+  margin-top: 0;
+  text-align: center;
+}
+
+.modal-confirm-desc {
+  color: #b0b5be;
+  text-align: center;
+  margin-bottom: 1.2rem;
+  font-size: 1rem;
+}
+
+.modal-confirm-actions {
+  display: flex;
+  gap: 18px;
+  width: 100%;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+.modal-cancel-btn {
+  background: #29303a;
+  color: #dde1e7;
+  border: 2px solid #40464e;
+  border-radius: 24px;
+  padding: 7px 32px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.18s, border 0.18s;
+}
+
+.modal-cancel-btn:hover {
+  background: #353c47;
+  border-color: #485160;
+}
+
+.modal-confirm-btn {
+  background: #ef4444;
+  color: #fff;
+  border: 2px solid #ef4444;
+  border-radius: 24px;
+  padding: 7px 32px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s, border 0.18s;
+}
+
+.modal-confirm-btn:hover {
+  background: #fff;
+  color: #ef4444;
+  border-color: #ef4444;
+}

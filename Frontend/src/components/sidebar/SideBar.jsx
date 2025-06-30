@@ -1,53 +1,43 @@
-import { useEffect, useState,  } from "react";
-import "../../styles/sidebar.css";
+import { useEffect, useState } from "react";
+import "./Sidebar.css";
+import ModalConfirmDelete from "./ModalConfirmDelete"; // Ajusta la ruta según tu proyecto
 
 export default function Sidebar({
-  notes,
-  selectedIndex,
-  onSelect,
-  onDelete
+  notes, selectedIndex, onSelect, onDelete,
+  open, onClose
 }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  // Modal de confirmación
+  const [showModal, setShowModal] = useState(false);
+  const [pendingDelete, setPendingDelete] = useState(null);
 
-  // Cerrar sidebar con ESC (opcional)
+  // Cerrar con ESC
   useEffect(() => {
     const handleEsc = (e) => {
-      if (e.key === "Escape" && sidebarOpen) setSidebarOpen(false);
+      if (e.key === "Escape" && open) onClose();
     };
     document.addEventListener("keydown", handleEsc);
     return () => document.removeEventListener("keydown", handleEsc);
-  }, [sidebarOpen]);
+  }, [open, onClose]);
 
-  // Para mostrar/ocultar sidebar en móvil, podrías iniciar en false
-  // const [sidebarOpen, setSidebarOpen] = useState(false);
+  // Cuando se confirma borrar
+  const handleConfirmDelete = () => {
+    if (pendingDelete) onDelete(pendingDelete);
+    setShowModal(false);
+    setPendingDelete(null);
+  };
+
+  // Cuando se da cancelar
+  const handleCancelDelete = () => {
+    setShowModal(false);
+    setPendingDelete(null);
+  };
 
   return (
-    <div className={`layout ${sidebarOpen ? "sidebar-open" : ""}`}>
-      {/* BOTÓN MENÚ SIEMPRE VISIBLE */}
-      <div
-        className={`background${sidebarOpen ? " open" : ""}`} style={{ zIndex: 1100 }}
-      >
-        <button
-          className="menu__icon"
-          aria-label="Toggle sidebar"
-          type="button"
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-        >
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-      </div>
-
-      {/* OVERLAY SÓLO CUANDO EL SIDEBAR ESTÁ ABIERTO */}
-      {sidebarOpen && (
-        <div
-          className="sidebar-overlay"
-          onClick={() => setSidebarOpen(false)}
-        ></div>
+    <>
+      {open && (
+        <div className="sidebar-overlay" onClick={onClose}></div>
       )}
-
-      <div className="sidebar">
+      <div className={`sidebar${open ? " open" : ""}`}>
         <div
           className="radio-container"
           style={{ "--total-radio": notes.length }}
@@ -66,16 +56,27 @@ export default function Sidebar({
               </label>
               {note.id !== "fake" && (
                 <button
-                  onClick={() => onDelete(note.id)}
-                  style={{
-                    marginLeft: 8,
-                    color: "red",
-                    background: "none",
-                    border: "none",
-                    cursor: "pointer",
+                  className="delete-btn"
+                  onClick={() => {
+                    setShowModal(true);
+                    setPendingDelete(note.id);
                   }}
                 >
-                  borrar
+                  <svg
+                    className="delete-btn-icon"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    width="20"
+                    height="20"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M8 7V5a2 2 0 012-2h2a2 2 0 012 2v2"
+                    />
+                  </svg>
                 </button>
               )}
             </div>
@@ -90,6 +91,13 @@ export default function Sidebar({
           </div>
         </div>
       </div>
-    </div>
+
+      {/* MODAL de confirmación */}
+      <ModalConfirmDelete
+        open={showModal}
+        onCancel={handleCancelDelete}
+        onConfirm={handleConfirmDelete}
+      />
+    </>
   );
 }

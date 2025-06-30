@@ -94,9 +94,7 @@ export default function NoteEditor({ userId, note, onSave }) {
         <button className="logout-btn" onClick={handleLogout}>
           Cerrar sesión
         </button>
-        <button className="nuevo-btn" onClick={handleNuevaNota}>
-          Crear nota nueva
-        </button>
+      
       </div>
 
       <input
