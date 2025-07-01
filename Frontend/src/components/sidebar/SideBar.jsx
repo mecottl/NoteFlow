@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Sidebar.css";
 import ModalConfirmDelete from "./ModalConfirmDelete"; // Ajusta la ruta
 
@@ -30,6 +31,13 @@ export default function Sidebar({
   const handleCancelDelete = () => {
     setShowModal(false);
     setPendingDelete(null);
+  };
+    const navigate = useNavigate();
+
+   const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+    navigate('/auth');
   };
 
   return (
@@ -90,8 +98,12 @@ export default function Sidebar({
             ></div>
           </div>
         </div>
+      <div className="logout-container">
+        <button className="logout-btn" onClick={handleLogout}>
+          Cerrar sesión
+        </button>
       </div>
-      {/* MODAL de confirmación */}
+      </div>
       <ModalConfirmDelete
         open={showModal}
         onCancel={handleCancelDelete}

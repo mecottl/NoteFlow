@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import "./AuthForm.css"
 
 export default function AuthForm() {
   const [isRegister, setIsRegister] = useState(false);
@@ -52,10 +53,14 @@ export default function AuthForm() {
     }
   };
 
+
+
   return (
-    <div className="auth-form">
-      <h2>{isRegister ? 'Crear cuenta' : 'Iniciar sesión'}</h2>
-      <form onSubmit={handleSubmit}>
+    <div class="container">
+      <div class="heading">
+        <h2>{isRegister ? 'Sign Up' : 'Log In'}</h2>
+      </div>
+      <form onSubmit={handleSubmit} class="form" action="">
         {isRegister && (
           <input
             type="text"
@@ -64,6 +69,7 @@ export default function AuthForm() {
             onChange={(e) => setUsername(e.target.value)}
             required
             autoFocus
+            className='input'
           />
         )}
         <input
@@ -73,6 +79,7 @@ export default function AuthForm() {
           onChange={(e) => setEmail(e.target.value)}
           required
           autoFocus={!isRegister}
+          className='input'
         />
         <input
           type="password"
@@ -80,18 +87,20 @@ export default function AuthForm() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
+          className='input'
         />
-        <button type="submit" disabled={loading}>
+        <button type="submit" disabled={loading} class="login-button" value="Sign In">
           {loading
             ? 'Procesando...'
             : isRegister
-            ? 'Registrarse'
-            : 'Entrar'}
+              ? 'Registrarse'
+              : 'Entrar'}
         </button>
         {errorMsg && <div className="error-msg">{errorMsg}</div>}
       </form>
-      <button onClick={() => setIsRegister(!isRegister)} disabled={loading}>
-        {isRegister ? 'Ya tengo cuenta' : 'Crear cuenta nueva'}
+      <button className='forgot-password' onClick={() => setIsRegister(!isRegister)} disabled={loading}>
+        {isRegister ? 'I have already account' : 'Create account'
+        } 
       </button>
     </div>
   );

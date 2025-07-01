@@ -96,11 +96,6 @@ export default function NoteEditor({ userId, note, onSave, lanzarAlerta }) {
 
   return (
     <div className="center-page">
-      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginBottom: 10 }}>
-        <button className="logout-btn" onClick={handleLogout}>
-          Cerrar sesión
-        </button>
-      </div>
 
       <input
         className="title-input"
