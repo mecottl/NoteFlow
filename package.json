@@ -3,5 +3,11 @@
     "bcrypt": "^6.0.0",
     "jsonwebtoken": "^9.0.2",
     "react-router-dom": "^7.6.2"
+  },
+  
+  "name": "noteflow-root",
+  "private": true,
+  "scripts": {
+    "install-all": "npm --prefix Frontend install && npm --prefix Backend install"
   }
 }
