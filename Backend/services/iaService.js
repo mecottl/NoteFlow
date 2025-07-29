@@ -24,7 +24,7 @@ async function getPrediction(prompt) {
           content: prompt
         }
       ],
-      max_tokens: 15, // para que la continuación sea breve
+      max_tokens: 15,
       temperature: 0.7
     };
 

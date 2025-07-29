@@ -89,7 +89,7 @@ export default function NoteEditor({ userId, note, onSave, lanzarAlerta }) {
       } else {
         lanzarAlerta("error", "Error al guardar o actualizar la nota.");
       }
-    } catch (error) {
+    } catch (e) {
       lanzarAlerta("error", "Error al guardar o actualizar la nota.");
     }
   };
@@ -116,7 +116,7 @@ export default function NoteEditor({ userId, note, onSave, lanzarAlerta }) {
               aria-hidden="true"
             >
               <span style={{ opacity: 0 }}>{prompt}</span>
-              <span className="ghost-suggest">{suggestion}</span>
+              <span className="ghost-suggest ">{suggestion}</span>
               {suggestion && " ⇥TAB"}
             </div>
             <textarea
