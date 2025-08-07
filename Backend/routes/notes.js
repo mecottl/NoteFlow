@@ -2,7 +2,7 @@
 // --- NOTA: Rutas limpias y correctas, usan ES6, y filtran por userId ---
 
 import express from 'express';
-import dbPromise from '../db/db.js';
+import getDb from '../db/db.js';
 
 const router = express.Router();
 
@@ -10,7 +10,7 @@ const router = express.Router();
 router.post('/', async (req, res) => {
   const { user_id, title, content } = req.body;
   try {
-    const db = await dbPromise;
+    const db = await getDb();
     const result = await db.run(
       `INSERT INTO notes (user_id, title, content) VALUES (?, ?, ?)`,
       [user_id, title, content]
@@ -26,7 +26,7 @@ router.get('/user/:userId', async (req, res) => {
   // --- MODIFICACIÓN: Cambié 'user_id' por 'userId' para que coincida con frontend/localStorage ---
   const { userId } = req.params;
   try {
-    const db = await dbPromise;
+    const db = await getDb();
     const notes = await db.all(`SELECT * FROM notes WHERE user_id = ?`, [userId]);
     res.json(notes);
   } catch (err) {
@@ -38,7 +38,7 @@ router.get('/user/:userId', async (req, res) => {
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    const db = await dbPromise;
+    const db = await getDb();
     const note = await db.get(`SELECT * FROM notes WHERE id = ?`, [id]);
     res.json(note);
   } catch (err) {
@@ -51,7 +51,7 @@ router.put('/:id', async (req, res) => {
   const { id } = req.params;
   const { title, content } = req.body;
   try {
-    const db = await dbPromise;
+    const db = await getDb();
     await db.run(
       `UPDATE notes SET title = ?, content = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
       [title, content, id]
@@ -66,7 +66,7 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    const db = await dbPromise;
+    const db = await getDb();
     await db.run(`DELETE FROM notes WHERE id = ?`, [id]);
     res.json({ success: true });
   } catch (err) {

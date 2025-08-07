@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import API_ENDPOINTS from '../../config/api.js';
 
 export default function useSuggestion(iaActiva) {
   const [prompt, setPrompt] = useState('');
@@ -15,7 +16,7 @@ export default function useSuggestion(iaActiva) {
     setLoading(true);
 
     try {
-      const res = await fetch('http://localhost:3001/predict', {
+      const res = await fetch(API_ENDPOINTS.PREDICT.SUGGEST, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt: text }),

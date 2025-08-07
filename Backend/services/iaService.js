@@ -1,6 +1,7 @@
 import axios from 'axios';
+import config from '../config/env.js';
 
-const apiKey = process.env.OPENROUTER_API_KEY;
+const apiKey = config.OPENROUTER_API_KEY;
 console.log('OpenRouter API Key:', apiKey ? '✅ Presente' : '❌ Faltante o inválida');
 
 async function getPrediction(prompt) {
@@ -13,7 +14,7 @@ async function getPrediction(prompt) {
     };
 
     const data = {
-      model: 'deepseek/deepseek-chat-v3-0324:free',
+      model: config.OPENROUTER_MODEL,
       messages: [
         {
           role: 'system',

@@ -2,16 +2,20 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 40px;
-  gap: 20px;
+  padding: 20px;
+  gap: 24px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
 }
 
 .title-input {
-  width: 820px;
-  margin: 30PX auto 10px auto;
-  padding: 10px 16px;
-  font-size: 1.2rem;
-  border-radius: 8px;
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px 20px;
+  font-size: 1.4rem;
+  font-weight: 600;
+  border-radius: 12px;
   background: linear-gradient(#212121, #212121) padding-box,
               linear-gradient(180deg, transparent 20%, #5702C5, #E9328F) border-box;
   border: 2px solid transparent;
@@ -19,31 +23,53 @@
   font-family: inherit;
   display: block;
   box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+.title-input:focus {
+  outline: none;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(87, 2, 197, 0.3);
 }
 .title-input::placeholder {
   color: #cecece;
 }
 
 .note-container {
-  width: 820px; /* Más ancho! */
+  width: 90%;
+  max-width: 1200px;
   background: linear-gradient(#212121, #212121) padding-box,
               linear-gradient(180deg, transparent 20%, #5702C5, #E9328F) border-box;
   border: 2px solid transparent;
-  padding: 32px 24px;
-  font-size: 14px;
+  padding: 40px 32px;
+  font-size: 16px;
   font-family: inherit;
   color: white;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
   box-sizing: border-box;
-  border-radius: 16px;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.note-container:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 60px rgba(87, 2, 197, 0.2);
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
 }
 
 label {
@@ -57,19 +83,23 @@ label {
 .textarea-wrapper {
   width: 100%;
   position: relative;
-  min-height: 96px;
-  margin-bottom: 16px;
+  min-height: 400px;
+  margin-bottom: 24px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* Ghost input: prompt + suggestion IA, detrás del textarea */
 .ghost-input {
   width: 100%;
-  min-height: 96px;
-  padding: 12px 16px;
-  border-radius: 8px;
+  min-height: 400px;
+  padding: 20px 24px;
+  border-radius: 12px;
   font-family: inherit;
-  font-size: 16px;
-  line-height: 1.5;
+  font-size: 18px;
+  line-height: 1.6;
   color: #777;
   background: transparent;
   white-space: pre-wrap;
@@ -88,20 +118,21 @@ label {
 .ghost-suggest {
   color: #b965ff;
   opacity: 0.95;
+  font-weight: 500;
 }
 
 /* Textarea editable, encima del ghost */
 .editable-layer {
   width: 100%;
-  min-height: 96px;
-  max-height: 500px;
-  padding: 12px 16px;
-  border-radius: 8px;
-  border: 1px solid #424242;
+  min-height: 400px;
+  max-height: 800px;
+  padding: 20px 24px;
+  border-radius: 12px;
+  border: 1px solid transparent;
   resize: none; /* No resize manual */
   font-family: inherit;
-  font-size: 16px;
-  line-height: 1.5;
+  font-size: 18px;
+  line-height: 1.6;
   box-sizing: border-box;
   background: transparent;
   color: #fff;
@@ -110,29 +141,57 @@ label {
   position: relative;
   z-index: 1;
   overflow-y: auto;
-  transition: border-color 0.2s;
+  transition: all 0.3s ease;
+  scrollbar-width: thin;
+  scrollbar-color: #5702C5 #1a1a1a;
 }
 
 .editable-layer:focus {
   border-color: #E9328F;
+  box-shadow: 0 0 0 2px rgba(233, 50, 143, 0.2);
+}
+
+/* Scrollbar personalizado */
+.editable-layer::-webkit-scrollbar {
+  width: 8px;
+}
+
+.editable-layer::-webkit-scrollbar-track {
+  background: #1a1a1a;
+  border-radius: 4px;
+}
+
+.editable-layer::-webkit-scrollbar-thumb {
+  background: #5702C5;
+  border-radius: 4px;
+}
+
+.editable-layer::-webkit-scrollbar-thumb:hover {
+  background: #E9328F;
 }
 
 .form-submit-btn {
   font-family: inherit;
-  color: #c9c9c9;
-  font-weight: 600;
-  width: 40%;
-  background: #313131;
-  border: 1px solid #414141;
-  padding: 12px 16px;
-  font-size: inherit;
-  cursor: pointer;
-  border-radius: 6px;
-  transition: 0.2s ease;
-}
-.form-submit-btn:hover {
-  background: linear-gradient(#212121, #212121) padding-box,
-              linear-gradient(180deg, transparent 20%, #5702C5, #E9328F) border-box;
-  border: 2px solid transparent;
   color: #fff;
+  font-weight: 600;
+  width: 200px;
+  background: linear-gradient(135deg, #5702C5 0%, #E9328F 100%);
+  border: none;
+  padding: 16px 24px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(87, 2, 197, 0.3);
+}
+
+.form-submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(87, 2, 197, 0.5);
+  background: linear-gradient(135deg, #E9328F 0%, #5702C5 100%);
+}
+
+.form-submit-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 10px rgba(87, 2, 197, 0.3);
 }

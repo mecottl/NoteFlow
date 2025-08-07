@@ -2,12 +2,18 @@
   "dependencies": {
     "bcrypt": "^6.0.0",
     "jsonwebtoken": "^9.0.2",
-    "react-router-dom": "^7.6.2"
+    "react-router-dom": "^7.6.2",
+    "concurrently": "^8.2.2"
   },
   
   "name": "noteflow-root",
   "private": true,
   "scripts": {
-    "install-all": "npm --prefix Frontend install && npm --prefix Backend install"
+    "install-all": "npm --prefix frontend install && npm --prefix Backend install",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd Backend && npm start",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build",
+    "start": "cd Backend && npm start"
   }
 }

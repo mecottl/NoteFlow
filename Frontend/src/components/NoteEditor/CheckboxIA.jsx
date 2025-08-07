@@ -19,7 +19,7 @@ export default function Checkbox({ iaActiva, setIaActiva }) {
                     ></path>
                 </svg>
             </div>
-            <span className="label">IA</span>
+            <span className="label">🤖 IA Asistente</span>
         </label>
     );
 }

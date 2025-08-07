@@ -1,15 +1,24 @@
 .checkbox-wrapper {
-  --checkbox-size: 18px;
-  --checkbox-color: #5702C5   ;
-  --checkbox-shadow: #6002DB ;
-  --checkbox-border: #8930FC    ;
+  --checkbox-size: 20px;
+  --checkbox-color: #5702C5;
+  --checkbox-shadow: #6002DB;
+  --checkbox-border: #8930FC;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: flex-start;
   position: relative;
   cursor: pointer;
-  padding: 5px;
-  transform: scale(0.9);
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(87, 2, 197, 0.1);
+  border: 1px solid rgba(87, 2, 197, 0.3);
+  transition: all 0.3s ease;
+}
+
+.checkbox-wrapper:hover {
+  background: rgba(87, 2, 197, 0.2);
+  border-color: rgba(87, 2, 197, 0.5);
+  transform: translateY(-1px);
 }
 
 .checkbox-wrapper input {
@@ -97,10 +106,11 @@
 }
 
 .checkbox-wrapper .label {
-  margin-left: 15px;
+  margin-left: 12px;
   font-family: "Segoe UI", sans-serif;
-  color: #fff ;
-  font-size: 14px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
   text-shadow: 0 0 10px var(--checkbox-shadow);
   opacity: 0.9;
   transition: all 0.3s;

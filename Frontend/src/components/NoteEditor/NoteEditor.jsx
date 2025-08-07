@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Checkbox from './CheckboxIA';
 import useSuggestion from './useSuggestion';
 import SuggestLoader from './SuggestLoader';
+import API_ENDPOINTS from '../../config/api.js';
 import '../../styles/NoteEditor.css';
 
 export default function NoteEditor({ userId, note, onSave, lanzarAlerta }) {
@@ -33,7 +34,7 @@ export default function NoteEditor({ userId, note, onSave, lanzarAlerta }) {
     const maxH = Math.max(
       ghostRef.current.scrollHeight,
       textareaRef.current.scrollHeight,
-      96
+      400
     );
     ghostRef.current.style.height = maxH + 'px';
     textareaRef.current.style.height = maxH + 'px';
@@ -62,8 +63,8 @@ export default function NoteEditor({ userId, note, onSave, lanzarAlerta }) {
     }
     const method = noteId ? 'PUT' : 'POST';
     const endpoint = noteId
-      ? `http://localhost:3001/notes/${noteId}`
-      : 'http://localhost:3001/notes';
+      ? API_ENDPOINTS.NOTES.UPDATE(noteId)
+      : API_ENDPOINTS.NOTES.CREATE;
 
     try {
       const res = await fetch(endpoint, {
@@ -96,7 +97,6 @@ export default function NoteEditor({ userId, note, onSave, lanzarAlerta }) {
 
   return (
     <div className="center-page">
-
       <input
         className="title-input"
         type="text"
@@ -116,7 +116,7 @@ export default function NoteEditor({ userId, note, onSave, lanzarAlerta }) {
               aria-hidden="true"
             >
               <span style={{ opacity: 0 }}>{prompt}</span>
-              <span className="ghost-suggest ">{suggestion}</span>
+              <span className="ghost-suggest">{suggestion}</span>
               {suggestion && " ⇥TAB"}
             </div>
             <textarea
@@ -125,16 +125,19 @@ export default function NoteEditor({ userId, note, onSave, lanzarAlerta }) {
               value={prompt}
               onChange={handleChange}
               onKeyDown={handleKeyDown}
-              placeholder="Escribe tu nota aquí..."
+              placeholder="Escribe tu nota aquí... La IA te ayudará a completar tus ideas ✨"
               rows={4}
+              autoFocus
             />
           </div>
 
-          <button className="form-submit-btn" type="submit">
-            {noteId ? 'Actualizar NFlow' : 'Guardar NFlow'}
-          </button>
+          <div className="form-actions">
+            <button className="form-submit-btn" type="submit">
+              {noteId ? '💾 Actualizar NFlow' : '💾 Guardar NFlow'}
+            </button>
+            {loading && <SuggestLoader />}
+          </div>
         </form>
-        {loading && <SuggestLoader />}
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import API_ENDPOINTS from '../../config/api.js';
 import "./AuthForm.css"
 
 export default function AuthForm() {
@@ -17,8 +18,8 @@ export default function AuthForm() {
     setLoading(true);
 
     const endpoint = isRegister
-      ? 'http://localhost:3001/auth/register'
-      : 'http://localhost:3001/auth/login';
+      ? API_ENDPOINTS.AUTH.REGISTER
+      : API_ENDPOINTS.AUTH.LOGIN;
 
     const body = isRegister
       ? { username, email, password }

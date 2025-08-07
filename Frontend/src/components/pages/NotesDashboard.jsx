@@ -2,7 +2,8 @@ import { useState, useEffect, useCallback } from "react";
 import Header from "../Header/Header";
 import Sidebar from "../Sidebar/Sidebar";
 import NoteEditor from "../NoteEditor/NoteEditor";
-import CustomAlert from "../NoteEditor/CustomAlert"; // Asegúrate de que la ruta sea correcta
+import CustomAlert from "../NoteEditor/CustomAlert";
+import API_ENDPOINTS from "../../config/api.js";
 
 export default function NotesDashboard() {
   const userId = localStorage.getItem('userId');
@@ -22,14 +23,14 @@ export default function NotesDashboard() {
   // CREAR NOTA
   const handleCreateNote = async () => {
     if (!userId) return;
-    const res = await fetch('http://localhost:3001/notes', {
+    const res = await fetch(API_ENDPOINTS.NOTES.CREATE, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ user_id: userId, title: '', content: '' })
     });
     if (res.ok) {
       const { id } = await res.json();
-      const data = await fetch(`http://localhost:3001/notes/user/${userId}`).then(r => r.json());
+      const data = await fetch(API_ENDPOINTS.NOTES.GET_ALL(userId)).then(r => r.json());
       setNotes(data || []);
       const idx = data.findIndex(n => n.id === id);
       setSelectedIndex(idx !== -1 ? idx : 0);
@@ -44,7 +45,7 @@ export default function NotesDashboard() {
   // CARGAR NOTAS
   useEffect(() => {
     if (!userId) return;
-    fetch(`http://localhost:3001/notes/user/${userId}`)
+    fetch(API_ENDPOINTS.NOTES.GET_ALL(userId))
       .then((res) => res.json())
       .then((data) => {
         setNotes(data || []);
@@ -57,8 +58,8 @@ export default function NotesDashboard() {
 
   // ELIMINAR NOTA y alerta
   const handleDelete = async (id) => {
-    await fetch(`http://localhost:3001/notes/${id}`, { method: "DELETE" });
-    const data = await fetch(`http://localhost:3001/notes/user/${userId}`).then((r) => r.json());
+    await fetch(API_ENDPOINTS.NOTES.DELETE(id), { method: "DELETE" });
+    const data = await fetch(API_ENDPOINTS.NOTES.GET_ALL(userId)).then((r) => r.json());
     setNotes(data || []);
     setSelectedIndex(0);
     lanzarAlerta("eliminado", "Nota eliminada.");
@@ -66,7 +67,7 @@ export default function NotesDashboard() {
 
   // Guardar/actualizar (recibe noteId para mantener selección)
   const reloadNotes = async (noteIdToStay, tipoAlerta = null) => {
-    const data = await fetch(`http://localhost:3001/notes/user/${userId}`).then((r) => r.json());
+    const data = await fetch(API_ENDPOINTS.NOTES.GET_ALL(userId)).then((r) => r.json());
     setNotes(data || []);
     if (noteIdToStay) {
       const idx = data.findIndex(n => n.id === noteIdToStay);
